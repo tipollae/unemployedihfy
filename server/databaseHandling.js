@@ -1,5 +1,5 @@
 
-class dataBaseHandler{
+class databaseHandler{
 
     constructor(clientReference){
 
@@ -12,11 +12,12 @@ class dataBaseHandler{
 
     async checkExistingAccount(givenAccountID){
 
-        var existingUser = this.localTokens[givenAccountID];
+        var existingLocalUser = this.localTokens[givenAccountID];
+        var existingDatabaseUser = null;
 
-        if (!existingUser){
+        if (!existingLocalUser){
 
-            existingUser = await this.usersCollection.findOne({
+            existingDatabaseUser = await this.usersCollection.findOne({
 
                 accountID: givenAccountID
 
@@ -24,11 +25,11 @@ class dataBaseHandler{
 
         }
 
-        return !!existingUser;
+        return !!(existingLocalUser || existingDatabaseUser);
 
     }
 
 }
 module.exports = {
-    dataBaseHandler
+    databaseHandler
 }

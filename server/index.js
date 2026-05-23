@@ -1,7 +1,3 @@
-const dns = require("dns");
-dns.setServers(["8.8.8.8", "1.1.1.1"]);
-dns.setDefaultResultOrder("ipv4first");
-
 //importing express
 const express = require("express");
 const path = require("path");
@@ -20,6 +16,12 @@ const port = 3000;
 //environment variables
 require('dotenv').config();
 
+const dns = require("dns");
+if (process.env.USE_CUSTOM_DNS === "true") {
+  dns.setServers(["8.8.8.8", "1.1.1.1"]);
+}
+dns.setDefaultResultOrder("ipv4first");
+
 // importing youtube downloader function
 const { downloadYoutubeAudio } = require('./downloadYoutubeAudio');
 
@@ -37,7 +39,7 @@ else console.log("Server has already been initiated");
 
 const { MongoClient, ServerApiVersion } = require("mongodb")
 const uri = process.env.MONGO_DB_AUTH;
-const { dataBaseHandler } = require("./databaseHandling");
+const { databaseHandler } = require("./databaseHandling");
 let serverDataHandler = null;
 
 if (!uri) {
@@ -62,7 +64,7 @@ async function connectToMongoDB(){
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
-        serverDataHandler = new dataBaseHandler(client)
+        serverDataHandler = new databaseHandler(client)
 
     } catch (error) {
         console.error("MongoDB connection failed:", error);
