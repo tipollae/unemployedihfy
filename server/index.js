@@ -1,3 +1,7 @@
+const dns = require("dns");
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
+dns.setDefaultResultOrder("ipv4first");
+
 //importing express
 const express = require("express");
 const path = require("path");
@@ -8,9 +12,13 @@ const app = express();
 
 //creates an http server using the created express app
 const server = require("http").Server(app);
+
 //attaching socket io to http server
 const io = require("socket.io")(server);
 const port = 3000;
+
+//environment variables
+require('dotenv').config();
 
 // importing youtube downloader function
 const { downloadYoutubeAudio } = require('./downloadYoutubeAudio');
@@ -27,12 +35,47 @@ if (!server.listening){
 
 else console.log("Server has already been initiated");
 
-const localTokens = {};
+const { MongoClient, ServerApiVersion } = require("mongodb")
+const uri = process.env.MONGO_DB_AUTH;
+const { dataBaseHandler } = require("./databaseHandling");
+let serverDataHandler = null;
+
+if (!uri) {
+    console.error("MONGO_DB_AUTH is missing from .env");
+    process.exit(1);
+}
+
+const client = new MongoClient(uri, {
+    serverSelectionTimeoutMS: 5000,
+
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+    }
+});
+
+async function connectToMongoDB(){
+
+    try {
+        await client.connect();
+        await client.db("admin").command({ ping: 1 });
+        console.log("Pinged your deployment. You successfully connected to MongoDB!");
+
+        serverDataHandler = new dataBaseHandler(client)
+
+    } catch (error) {
+        console.error("MongoDB connection failed:", error);
+    }
+
+}
+connectToMongoDB().catch(console.dir);
 
 //on connection tasks
 io.on("connection", (socket)=>{
 
-    console.log("someone has connected");
+    //put all socket protocol events here
+    protocolFunctions(socket);
 
     socket.on("downloadmp3", async(data) => {
         const {url, folder} = data;
@@ -59,4 +102,34 @@ io.on("connection", (socket)=>{
 
     })
 
+    socket.on("check-existing-account", async (givenAccountID)=>{
+
+        console.log(givenAccountID);
+
+        if (!serverDataHandler){
+
+            socket.emit("account-check-result", {
+                success: false,
+                message: "Database not ready yet"
+            })
+            return;
+
+        }
+
+        const existingAccount = await serverDataHandler.checkExistingAccount(givenAccountID);
+        console.log(existingAccount);
+
+        socket.emit("account-check-result", {
+            success: true,
+            foundAccount: existingAccount
+        })
+
+    })
+
 })
+
+function protocolFunctions(socket){
+
+    socket.emit("check-existing-account");
+
+}
