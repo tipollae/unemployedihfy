@@ -1,6 +1,12 @@
 //environment variables
 require('dotenv').config();
 
+const dns = require("dns");
+if (process.env.USE_CUSTOM_DNS === "true") {
+  dns.setServers(["8.8.8.8", "1.1.1.1"]);
+}
+dns.setDefaultResultOrder("ipv4first");
+
 //importing express
 const express = require("express");
 const path = require("path");
