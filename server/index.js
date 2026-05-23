@@ -1,6 +1,5 @@
-const dns = require("dns");
-dns.setServers(["8.8.8.8", "1.1.1.1"]);
-dns.setDefaultResultOrder("ipv4first");
+//environment variables
+require('dotenv').config();
 
 //importing express
 const express = require("express");
@@ -16,9 +15,6 @@ const server = require("http").Server(app);
 //attaching socket io to http server
 const io = require("socket.io")(server);
 const port = 3000;
-
-//environment variables
-require('dotenv').config();
 
 // importing youtube downloader function
 const { downloadYoutubeAudio } = require('./downloadYoutubeAudio');
