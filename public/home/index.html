@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="../styling/home.css" rel="stylesheet">
+</head>
+<body>
+    
+    <div id = "navigationBarDesktop">
+
+        <div id = "navBarActivate" onclick = "navBarHandler()"></div>
+
+    </div>
+
+    <script>
+
+        function navBarHandler(){
+            const navBar = document.querySelector('#navigationBarDesktop')
+            const navBarActivate = document.querySelector('#navBarActivate')
+            
+            if (navBarActivate.classList.contains("active")){
+                navBarActivate.classList.remove("active");
+                navBar.classList.remove("active");
+            }
+
+            else{
+                navBarActivate.classList.add("active");
+                navBar.classList.add("active");
+            }
+
+        }
+
+    </script>
+
+    <script type = "text/javascript" src = "../scripts/accountHandling.js"></script>
+
+</body>
+</html>

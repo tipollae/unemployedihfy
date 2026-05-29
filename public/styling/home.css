@@ -1,0 +1,51 @@
+
+#navigationBarDesktop{
+
+    position: fixed;
+    top: 0;
+    left: -300px;
+
+    width: 300px;
+    height: 100%;
+
+    background-color: pink;
+
+    transition: transform 0.5s ease-in-out,
+    left 0.5s ease-in-out;
+
+}
+
+#navigationBarDesktop.active{
+
+    left: 0;
+
+}
+
+
+#navBarActivate{
+
+    position: absolute;
+    margin-top: 20px;
+    left: 100%;
+
+    width: 80px;
+    aspect-ratio: 1/1;
+
+    cursor: auto;
+
+    background-color: red;
+
+    transition: opacity 0.5s ease-in-out,
+    transform 0.5s ease-in-out,
+    background-color 0.5s ease-in-out,
+    left 0.5s ease-in-out;
+
+    cursor: pointer;
+
+}
+
+#navBarActivate.active{
+
+    left: 5%;
+
+}
